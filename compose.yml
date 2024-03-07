@@ -1,0 +1,53 @@
+version: "3"
+
+services:
+    db:
+        container_name: lamp-database
+
+        restart: always
+    
+        image: mysql
+
+        # ports: 
+            # - "3306:3306"
+        
+        command: --default-authentication-plugin=mysql_native_password
+        
+        environment:
+            MYSQL_DATABASE: $MYSQL_DATABASE
+            MYSQL_PASSWORD: $MYSQL_PASSWORD
+            MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
+        
+        volumes:
+            - .db/dump:/docker-entrypoint-initdb.d
+            - .db/conf:/etc/mysql/conf.d
+            - .db/data:/var/lib/mysql
+
+    www:
+        container_name: lamp-php
+
+        restart: always
+        
+        build: .
+        
+        ports: 
+            - "8888:80"
+            
+        volumes:
+            - "./www:/var/www/"
+            - "./sites-available/:/etc/apache2/sites-available/"
+
+    phpmyadmin:
+        container_name: lamp-phpmyadmin
+
+        restart: always
+    
+        image: phpmyadmin/phpmyadmin
+
+        ports:
+            - "${HOST_PHPMYADMIN_PORT}:80"
+        
+        environment:
+            MYSQL_USER: root
+            MYSQL_PASSWORD: $MYSQL_PASSWORD
+            MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD 
