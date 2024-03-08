@@ -4,12 +4,32 @@ declare(strict_types=1);
 
 namespace Core;
 
+require_once "context.php";
 require_once "request.php";
 require_once "response.php";
 require_once "base_view.php";
 
 
 class App {
+    /**
+     * @var Context Context array
+     */
+    protected Context $context;
+
+    public function __construct() {
+        $this->context = new Context;
+    }
+
+    /**
+     * Set context value
+     */
+    public function use(string $key, mixed $value) {
+        $this->context->$key = $value;
+    }
+
+    /**
+     * Start app
+     */
     public function run() {
         
         // Trim url
@@ -38,7 +58,7 @@ class App {
         include_once $path;
 
         // Create view
-        $view = new \View($request, $response);
+        $view = new \View($request, $response, $this->context);
 
         // Execute view
         $this->execute_view($view, $request, $response);

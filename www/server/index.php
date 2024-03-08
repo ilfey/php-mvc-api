@@ -12,6 +12,8 @@ use Core\App;
 
 $app = new App;
 
+$app->use("DB", "Database connection :)");
+
 $app->run();
 
 // echo phpinfo();
